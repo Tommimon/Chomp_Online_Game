@@ -1,7 +1,6 @@
 
 # provolone
-import pygame
-from tavola import *
+from src.tavola import *
 succes, fail = pygame.init()
 print("{0} successes and {1} failures".format(succes, fail))
 
