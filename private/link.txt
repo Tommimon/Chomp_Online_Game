@@ -1,3 +1,0 @@
-https://www.pygame.org/ftp/contrib/pygame_docs.pdf
-https://riptutorial.com/it/pygame
-https://riptutorial.com/Download/pygame.pdf
