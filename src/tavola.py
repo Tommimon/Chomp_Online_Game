@@ -52,7 +52,6 @@ class Tavola:
 
     def disegna(self):  # crea tutte le casella nella poszione giusta e le aggiunge alla lista caselle
         self._trova_lato()
-        print("cacca")
         y = self.pos_y + self.margine_top
         for i in range(0, self.n_rig):
             x = self.pos_x + self.margine_left
@@ -60,10 +59,8 @@ class Tavola:
             for j in range(0, self.n_col):
                 if i == self.n_rig - 1 and j == 0:  # se è la casella in basso a sinistra metto avvelenato = True
                     avvelenato = True
-                    print("getty")
                 else:
                     avvelenato = False
-                    print("jerry")
                 new = Casella(self, j, i, x, y, self.lato, avvelenato)
                 rig.append(new)  # aggiungo all lista a righe
                 x += self.lato + self.padding
