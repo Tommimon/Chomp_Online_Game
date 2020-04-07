@@ -13,6 +13,7 @@ screen = pygame.display.set_mode(RISOLUZIONE)  # mostro schermo
 clock = pygame.time.Clock()  # inizializzo clock
 
 tavoletta = Tavola(0, 0, 720, 480, 10, 20, PADDING)
+print("kmffdlknsdsflkmdslkm")
 tavoletta.disegna()
 
 while True:
