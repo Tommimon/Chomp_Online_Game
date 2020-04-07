@@ -25,7 +25,7 @@ while True:
             if event.button == 1:
                 tavoletta.ceck_click(event.pos)
         elif event.type == FINEPARTITA:
-            print('fine' + event.win)
+            print('fine, ha vinto il ' + event.win + ' giocatore')
 
     screen.fill(NERO)
     tavoletta.blit(screen)
