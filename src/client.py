@@ -7,7 +7,6 @@ print("{0} successes and {1} failures".format(succes, fail))
 FPS = 60  # Frames per second.
 RISOLUZIONE = (720, 480)
 NERO = (0, 0, 0)
-DIM_CAS = 64
 PADDING = 4
 
 screen = pygame.display.set_mode(RISOLUZIONE)  # mostro schermo
