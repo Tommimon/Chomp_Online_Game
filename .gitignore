@@ -1,3 +1,4 @@
 private/
 .idea/
 __pycache__/
+venv/
