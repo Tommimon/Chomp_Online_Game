@@ -1,5 +1,3 @@
-
-# provolone
 from src.tavola import *
 succes, fail = pygame.init()
 print("{0} successes and {1} failures".format(succes, fail))
@@ -10,9 +8,6 @@ RISOLUZIONE = (720, 480)
 NERO = (0, 0, 0)
 DIM_CAS = 64
 PADDING = 4
-
-# hello
-pass
 
 screen = pygame.display.set_mode(RISOLUZIONE)  # mostro schermo
 clock = pygame.time.Clock()  # inizializzo clock
