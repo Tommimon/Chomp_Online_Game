@@ -13,7 +13,7 @@ PADDING = 4
 screen = pygame.display.set_mode(RISOLUZIONE)  # mostro schermo
 clock = pygame.time.Clock()  # inizializzo clock
 
-tavoletta = Tavola(0, 0, 720, 480, 10, 5, PADDING)
+tavoletta = Tavola(0, 0, 720, 480, 10, 4, PADDING)
 tavoletta.disegna()
 
 while True:
