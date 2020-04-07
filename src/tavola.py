@@ -1,17 +1,21 @@
 import pygame
 
-COLORE = (139, 69, 13)
+MARRONE = (139, 69, 13)
+ROSSO = (255, 0, 0)
 FINEPARTITA = pygame.USEREVENT + 1  # All user defined events can have the value of USEREVENT or higher.
 
 
 class Casella:
-    def __init__(self, tavola, index_x, index_y, pos_x, pos_y, lato):
+    def __init__(self, tavola, index_x, index_y, pos_x, pos_y, lato, avvelenato):
         self.tavola = tavola  # mi salvo un ref alla tavola che contiene questa casella
         self.index_x = index_x  # è la poszione che la casella occupa enlla tavola (è un num naturale)
         self.index_y = index_y
         self.rect = pygame.Rect((pos_x, pos_y), (lato, lato))
         self.image = pygame.Surface((lato, lato))
-        self.image.fill(COLORE)
+        if avvelenato:
+            self.image.fill(ROSSO)
+        else:
+            self.image.fill(MARRONE)
 
     def blit(self, screen):
         screen.blit(self.image, self.rect)
@@ -48,12 +52,19 @@ class Tavola:
 
     def disegna(self):  # crea tutte le casella nella poszione giusta e le aggiunge alla lista caselle
         self._trova_lato()
+        print("cacca")
         y = self.pos_y + self.margine_top
         for i in range(0, self.n_rig):
             x = self.pos_x + self.margine_left
             rig = []
             for j in range(0, self.n_col):
-                new = Casella(self, j, i, x, y, self.lato)
+                if i == self.n_rig - 1 and j == 0:  # se è la casella in basso a sinistra metto avvelenato = True
+                    avvelenato = True
+                    print("getty")
+                else:
+                    avvelenato = False
+                    print("jerry")
+                new = Casella(self, j, i, x, y, self.lato, avvelenato)
                 rig.append(new)  # aggiungo all lista a righe
                 x += self.lato + self.padding
             y += self.lato + self.padding
