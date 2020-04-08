@@ -1,17 +1,16 @@
 import pygame as pg
+from src.globale import *
 
 MARRONE = (139, 69, 13)
 ROSSO = (255, 0, 0)
-FINEPARTITA = pg.USEREVENT + 1  # All user defined events can have the value of USEREVENT or higher.
-CLICKCASELLA = pg.USEREVENT + 2  # significa che il client deve dire al server di cancellare una casella
 
 
 class Casella:
-    def __init__(self, tavola, index_x, index_y, pos_x, pos_y, lato, avvelenato):
+    def __init__(self, tavola, index, pos, lato, avvelenato):
         self.tavola = tavola  # mi salvo un ref alla tavola che contiene questa casella
-        self.index_x = index_x  # è la poszione che la casella occupa enlla tavola (è un num naturale)
-        self.index_y = index_y
-        self.rect = pg.Rect((pos_x, pos_y), (lato, lato))
+        self.index_x = index[0]  # è la poszione che la casella occupa enlla tavola (è un num naturale)
+        self.index_y = index[1]
+        self.rect = pg.Rect(pos, (lato, lato))
         self.image = pg.Surface((lato, lato))
         if avvelenato:
             self.image.fill(ROSSO)
@@ -23,18 +22,17 @@ class Casella:
 
     def ceck_click(self, pos):  # se clicco la casella chiamo del_caselle sulla tavola "madre"
         if self.rect.collidepoint(pos):  # da una warning perché non sa che è una tupla (sto scemo)
-            pg.event.post(CLICKCASELLA, x=self.index_x, y =self.index_y)
-            # self.tavola.del_caselle(self.index_x, self.index_y)
+            Globale.get('game').send_move(self.index_x, self.index_y)
 
 
 class Tavola:
-    def __init__(self, pos_x, pos_y, width, height, n_col, n_rig, padding):
-        self.pos_x = pos_x  # posizione in pixel (distanza sa bordo sinistro)
-        self.pos_y = pos_y
-        self.width = width  # larghezza in pixel
-        self.height = height
-        self.n_col = n_col  # numero di colonne
-        self.n_rig = n_rig
+    def __init__(self, pos, size, dimensione, padding):
+        self.pos_x = pos[0]  # posizione in pixel (distanza sa bordo sinistro)
+        self.pos_y = pos[1]
+        self.width = size[0]  # larghezza in pixel
+        self.height = size[1]
+        self.n_col = dimensione[0]  # numero di colonne
+        self.n_rig = dimensione[1]
         self.lato = 0
         self.padding = padding
         self.margine_left = 0  # margine che devo lasciare per centrare la tavola nello spazio che mi è dato
@@ -63,7 +61,7 @@ class Tavola:
                     avvelenato = True
                 else:
                     avvelenato = False
-                new = Casella(self, j, i, x, y, self.lato, avvelenato)
+                new = Casella(self, (j, i), (x, y), self.lato, avvelenato)
                 rig.append(new)  # aggiungo all lista a righe
                 x += self.lato + self.padding
             y += self.lato + self.padding
@@ -90,11 +88,8 @@ class Tavola:
     def _ceck_win(self):  # controllo se sono finite le caselle o se ne manca una
         if len(self.righe[self.n_rig - 1]) == 0:  # se la riga più bassa è vuota allora sognifica che è tutto vuoto
             # l'ultimo che ha giocato ha perso
-            event = pg.event.Event(FINEPARTITA, win='penultimo')
-            pg.event.post(event)
+            Globale.get('game').fine_partita('penultimo')
         elif len(self.righe[self.n_rig - 1]) == 1 and (self.n_rig == 1 or len(self.righe[self.n_rig - 2]) == 0):
             # devo controllare che la riga più bassa abbia 1 solo elemento e che la penultima 0 (se c'è)
             # l'ultimo che ha giocato ha vinto
-            event = pg.event.Event(FINEPARTITA, win='ultimo')
-            pg.event.post(event)
-
+            Globale.get('game').fine_partita('ultimo')
