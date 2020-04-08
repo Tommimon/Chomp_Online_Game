@@ -7,5 +7,6 @@ __pycache__/
 
 #cartella di output per pyinstaller
 src/out/
+out/
 
 venv/
