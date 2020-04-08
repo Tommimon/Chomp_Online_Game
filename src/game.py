@@ -1,5 +1,5 @@
-from src.tavola import *
-from src.globale import *
+from tavola import *
+from globale import *
 
 # PARAMETRI
 FPS = 60  # Frames per second.
@@ -32,7 +32,7 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
 
     def resolve_event(self, event):
         if event.type == pg.QUIT:
-            quit()
+            self.quit()
         elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
             self.state.mouse_click(event.pos)
 
@@ -56,10 +56,13 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
     def fine_partita(self, win):
         print('fine, ha vinto il ' + win + ' giocatore')
 
+    def quit(self):
+        self.running = False
+
 
 class GameState:  # contiene tutte le var significative per descrivere il gioco e i metodi secondo cui modificarle
     def __init__(self, inizia):
-        self.tavoletta = Tavola(POS_TAVOLA, RISOLUZIONE, DIM_TAVOLA, PADDING)
+        self.tavoletta = Tavola(POS_TAVOLA, SIZE_TAVOLA, DIM_TAVOLA, PADDING)
         self.tavoletta.crea_caselle()
         self.possoGiocare = inizia  # quando clicko una cella diventa false e quando l'altro gioca diventa true
         self.turnoMio = inizia

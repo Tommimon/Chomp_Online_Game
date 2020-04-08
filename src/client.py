@@ -1,4 +1,4 @@
-from src.game import *
+from game import *
 
 INIZIA = True
 

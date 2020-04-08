@@ -1,5 +1,5 @@
 import pygame as pg
-from src.globale import *
+from globale import *
 
 MARRONE = (139, 69, 13)
 ROSSO = (255, 0, 0)
