@@ -1,5 +1,6 @@
 from tavola import *
 from globale import *
+import socket as sock
 
 # PARAMETRI
 FPS = 60  # Frames per second.
@@ -12,11 +13,12 @@ PADDING = 4
 
 
 class Game:  # gestisce code degli eventi, game loop e aggiornamento dello schermo e comunicazione server
-    def __init__(self, inizia):
+    def __init__(self, inizia, my_socket):
         succes, fail = pg.init()
         print("{0} successes and {1} failures".format(succes, fail))
         self.screen = pg.display.set_mode(RISOLUZIONE)  # mostro schermo
         self.clock = pg.time.Clock()  # inizializzo clock
+        self.socket = my_socket  # da usare per mandare e ricevere
         self.state = GameState(inizia)
         self.running = True
         Globale.new('game', self)  # verranno usate come varibili globali (sicome statiche posso accedere da ovunque)
@@ -52,6 +54,8 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
             x = 0  # ovviamente vanno messi a posto
             y = 0
             self.state.del_caselle(x, y)
+            if False:  # se arriva messaggio che è finita
+                self.fine_partita()
 
     def fine_partita(self, win):
         print('fine, ha vinto il ' + win + ' giocatore')

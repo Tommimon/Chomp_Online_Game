@@ -4,7 +4,7 @@
 
 
 class Globale:
-    variabili_globali = []  # ogni variabile è un lista di nome e valore
+    variabili_globali = []  # ogni variabile è una lista di nome e valore
 
     @staticmethod
     def new(nome, valore=None):

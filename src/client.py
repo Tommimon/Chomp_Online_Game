@@ -2,5 +2,9 @@ from game import *
 
 INIZIA = True
 
-gameIstance = Game(INIZIA)
+clientSocket = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
+
+# fare roba connessione
+
+gameIstance = Game(INIZIA, clientSocket)
 gameIstance.run()
