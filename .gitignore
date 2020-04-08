@@ -1,4 +1,11 @@
+#cartella per file personali
 private/
+
+#cartelle che usa pycharm
 .idea/
 __pycache__/
+
+#cartella di output per pyinstaller
+src/out/
+
 venv/
