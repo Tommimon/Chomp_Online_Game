@@ -1,8 +1,9 @@
-import pygame
+import pygame as pg
 
 MARRONE = (139, 69, 13)
 ROSSO = (255, 0, 0)
-FINEPARTITA = pygame.USEREVENT + 1  # All user defined events can have the value of USEREVENT or higher.
+FINEPARTITA = pg.USEREVENT + 1  # All user defined events can have the value of USEREVENT or higher.
+CLICKCASELLA = pg.USEREVENT + 2  # significa che il client deve dire al server di cancellare una casella
 
 
 class Casella:
@@ -10,8 +11,8 @@ class Casella:
         self.tavola = tavola  # mi salvo un ref alla tavola che contiene questa casella
         self.index_x = index_x  # è la poszione che la casella occupa enlla tavola (è un num naturale)
         self.index_y = index_y
-        self.rect = pygame.Rect((pos_x, pos_y), (lato, lato))
-        self.image = pygame.Surface((lato, lato))
+        self.rect = pg.Rect((pos_x, pos_y), (lato, lato))
+        self.image = pg.Surface((lato, lato))
         if avvelenato:
             self.image.fill(ROSSO)
         else:
@@ -22,7 +23,8 @@ class Casella:
 
     def ceck_click(self, pos):  # se clicco la casella chiamo del_caselle sulla tavola "madre"
         if self.rect.collidepoint(pos):  # da una warning perché non sa che è una tupla (sto scemo)
-            self.tavola.del_caselle(self.index_x, self.index_y)
+            pg.event.post(CLICKCASELLA, x=self.index_x, y =self.index_y)
+            # self.tavola.del_caselle(self.index_x, self.index_y)
 
 
 class Tavola:
@@ -50,7 +52,7 @@ class Tavola:
         self.margine_top = (self.height - (self.lato * self.n_rig)) / 2
         self.lato -= self.padding  # devo togliere il padding altrimenti quando disengo viene troppo grande
 
-    def disegna(self):  # crea tutte le casella nella poszione giusta e le aggiunge alla lista caselle
+    def crea_caselle(self):  # crea tutte le casella nella poszione giusta e le aggiunge alla lista caselle
         self._trova_lato()
         y = self.pos_y + self.margine_top
         for i in range(0, self.n_rig):
@@ -88,11 +90,11 @@ class Tavola:
     def _ceck_win(self):  # controllo se sono finite le caselle o se ne manca una
         if len(self.righe[self.n_rig - 1]) == 0:  # se la riga più bassa è vuota allora sognifica che è tutto vuoto
             # l'ultimo che ha giocato ha perso
-            event = pygame.event.Event(FINEPARTITA, win='penultimo')
-            pygame.event.post(event)
+            event = pg.event.Event(FINEPARTITA, win='penultimo')
+            pg.event.post(event)
         elif len(self.righe[self.n_rig - 1]) == 1 and (self.n_rig == 1 or len(self.righe[self.n_rig - 2]) == 0):
             # devo controllare che la riga più bassa abbia 1 solo elemento e che la penultima 0 (se c'è)
             # l'ultimo che ha giocato ha vinto
-            event = pygame.event.Event(FINEPARTITA, win='ultimo')
-            pygame.event.post(event)
+            event = pg.event.Event(FINEPARTITA, win='ultimo')
+            pg.event.post(event)
 
