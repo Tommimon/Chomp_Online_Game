@@ -1,4 +1,4 @@
-# l'idea è che tutti conoscano questo modulo così  da poter chiamare Game.last ad esempio
+# l'idea è che tutti conoscano questo modulo così  da poter chiamare Global.get('game') ad esempio
 # questa classe conterrà in una var statica una lista di tutte le var globali
 # le var statiche sono sccessibili ovunque se si importa la classe
 
