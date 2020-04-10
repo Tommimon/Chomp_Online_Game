@@ -1,6 +1,11 @@
 from messaggio import *
 from server_src.tavola import *
 
+# PARAMETRI
+IP_SERVER = 'localhost'
+PORTA_SERVER = 50000
+DIM_TAVOLA = (10, 4)  # numero di caselle in ogni direzione
+
 
 def leggi_mossa(mossa):  # prende in input un Messaggio
     try:
@@ -52,12 +57,6 @@ def abbandono(is_g1):
     partitaInCorso = False
 
 
-# PARAMETRI
-IP_SERVER = 'localhost'
-PORTA_SERVER = 50000
-DIM_TAVOLA = (10, 4)  # numero di caselle in ogni direzione
-
-
 ADDRESS_SERVER = (IP_SERVER, PORTA_SERVER)
 serverSocket = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
 serverSocket.bind(ADDRESS_SERVER)
@@ -69,12 +68,13 @@ while True:
     g1Socket, g1Address = serverSocket.accept()
     print('connesso g1', g1Address)
     messInizia.add_val('inizia', True)
+    messInizia.add_val('n_col', DIM_TAVOLA[0])
+    messInizia.add_val('n_rig', DIM_TAVOLA[1])
     messInizia.send(g1Socket)  # gli dico se è lui a fare la prima mossa
 
     g2Socket, g2Address = serverSocket.accept()
     print('connesso g2', g2Address)
-    messInizia.reset()
-    messInizia.add_val('inizia', False)
+    messInizia.set_val('inizia', False)
     messInizia.send(g2Socket)
 
     partitaInCorso = True

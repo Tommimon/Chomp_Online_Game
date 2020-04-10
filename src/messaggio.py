@@ -44,10 +44,7 @@ class Messaggio:
             pass
 
     def recv(self, socket):
-        rec = socket.recv(BUFFER_SIZE)
-        print('internal:', rec)
-        print('internal:' + str(rec))
-        self.stringa = rec.decode(CODIFICA)
+        self.stringa = socket.recv(BUFFER_SIZE).decode(CODIFICA)
 
     def try_recv(self, socket):
         try:

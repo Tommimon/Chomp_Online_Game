@@ -1,12 +1,22 @@
 from client_src.game import *
+from settings_reader import *
 
 # PARAMETRI
-IP_SERVER = 'localhost'
-PORTA_SERVER = 50000
 TIMEOUT = 0.2
 
+# leggo i settings dal file e se non ci sono li chiedo all'utente
+settings = leggi_prop(['server_ip', 'server_port'])
 
-ADDRESS_SERVER = (IP_SERVER, PORTA_SERVER)
+if settings[0] == '':  # server_ip
+    ipServer = input('ip: ')
+else:
+    ipServer = settings[0]
+if settings[1] == '':  # server_port
+    portaServer = int(input('porta: '))
+else:
+    portaServer = int(settings[1])
+
+ADDRESS_SERVER = (ipServer, portaServer)
 clientSocket = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
 clientSocket.connect(ADDRESS_SERVER)
 
@@ -18,8 +28,11 @@ if inizia:
     print('giochi per primo')
 else:
     print('giochi per secondo')
+nCol = int(messInizia.get_val('n_col'))
+nRig = int(messInizia.get_val('n_rig'))
+dimTavola = (nCol, nRig)
 
 clientSocket.settimeout(TIMEOUT)
 
-gameIstance = Game(inizia, clientSocket)
+gameIstance = Game(inizia, clientSocket, dimTavola)
 gameIstance.run()

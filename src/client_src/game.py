@@ -13,12 +13,12 @@ PADDING = 4
 
 
 class Game:  # gestisce code degli eventi, game loop e aggiornamento dello schermo e comunicazione server_src
-    def __init__(self, inizia, my_socket):
+    def __init__(self, inizia, my_socket, dim_tavola):
         succes, fail = pg.init()
         self.screen = pg.display.set_mode(RISOLUZIONE)  # mostro schermo
         self.clock = pg.time.Clock()  # inizializzo clock
         self.socket = my_socket  # da usare per mandare e ricevere
-        self.state = GameState(inizia)
+        self.state = GameState(inizia, dim_tavola)
         self.running = True
         Globale.game = self  # verrà usata come varibile globale (sicome statica posso accedere da ovunque)
         print('inizia il gioco!')
@@ -83,8 +83,8 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
 
 
 class GameState:  # contiene tutte le var significative per descrivere il gioco e i metodi secondo cui modificarle
-    def __init__(self, inizia):
-        self.tavoletta = Tavola(POS_TAVOLA, SIZE_TAVOLA, DIM_TAVOLA, PADDING)
+    def __init__(self, inizia, dim_tavola):
+        self.tavoletta = Tavola(POS_TAVOLA, SIZE_TAVOLA, dim_tavola, PADDING)
         self.tavoletta.crea_caselle()
         self.possoGiocare = inizia  # quando clicko una cella diventa false e quando l'altro gioca diventa true
         self.turnoMio = inizia
