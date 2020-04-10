@@ -36,6 +36,5 @@ class Messaggio:
         except sock.timeout:
             return False
 
-
     def reset(self):
         self.stringa = ''

@@ -22,7 +22,7 @@ class Casella:
 
     def ceck_click(self, pos):  # se clicco la casella chiamo del_caselle sulla tavola "madre"
         if self.rect.collidepoint(pos):  # da una warning perché non sa che è una tupla (sto scemo)
-            Globale.get('game').send_move(self.index_x, self.index_y)
+            Globale.game.send_move(self.index_x, self.index_y)
 
 
 class Tavola:
@@ -88,8 +88,8 @@ class Tavola:
     # def _ceck_win(self):  # controllo se sono finite le caselle o se ne manca una
     #     if len(self.righe[self.n_rig - 1]) == 0:  # se la riga più bassa è vuota allora sognifica che è tutto vuoto
     #         # l'ultimo che ha giocato ha perso
-    #         Globale.get('game').fine_partita('penultimo')
+    #         Globale.game.fine_partita('penultimo')
     #     elif len(self.righe[self.n_rig - 1]) == 1 and (self.n_rig == 1 or len(self.righe[self.n_rig - 2]) == 0):
     #         # devo controllare che la riga più bassa abbia 1 solo elemento e che la penultima 0 (se c'è)
     #         # l'ultimo che ha giocato ha vinto
-    #         Globale.get('game').fine_partita('ultimo')
+    #         Globale.game.fine_partita('ultimo')

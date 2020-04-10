@@ -21,8 +21,7 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
         self.socket = my_socket  # da usare per mandare e ricevere
         self.state = GameState(inizia)
         self.running = True
-        Globale.new('game', self)  # verranno usate come varibili globali (sicome statiche posso accedere da ovunque)
-        Globale.new('gameState', self.state)
+        Globale.game = self  # verrà usata come varibile globale (sicome statica posso accedere da ovunque)
 
     def run(self):  # fa il game loop
         while self.running:

@@ -8,4 +8,7 @@ __pycache__/
 #cartella di output per pyinstaller
 out/
 
+#cartella per i file vecchi che non voglio cancellare
+old/
+
 venv/
