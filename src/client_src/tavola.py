@@ -1,13 +1,12 @@
 import pygame as pg
-from client.globale import *
+from client_src.globale import *
 
 MARRONE = (139, 69, 13)
 ROSSO = (255, 0, 0)
 
 
 class Casella:
-    def __init__(self, tavola, index, pos, lato, avvelenato):
-        self.tavola = tavola  # mi salvo un ref alla tavola che contiene questa casella
+    def __init__(self, index, pos, lato, avvelenato):
         self.index_x = index[0]  # è la poszione che la casella occupa enlla tavola (è un num naturale)
         self.index_y = index[1]
         self.rect = pg.Rect(pos, (lato, lato))
@@ -61,7 +60,7 @@ class Tavola:
                     avvelenato = True
                 else:
                     avvelenato = False
-                new = Casella(self, (j, i), (x, y), self.lato, avvelenato)
+                new = Casella((j, i), (x, y), self.lato, avvelenato)
                 rig.append(new)  # aggiungo all lista a righe
                 x += self.lato + self.padding
             y += self.lato + self.padding
@@ -84,7 +83,7 @@ class Tavola:
                 rig = rig[0:x]  # tolgo tutti quelli da x in poi, x compreso
                 self.righe[i] = rig
 
-    # questo va fatto lato server perché va controllato
+    # questo va fatto lato server_src perché va controllato
     # def _ceck_win(self):  # controllo se sono finite le caselle o se ne manca una
     #     if len(self.righe[self.n_rig - 1]) == 0:  # se la riga più bassa è vuota allora sognifica che è tutto vuoto
     #         # l'ultimo che ha giocato ha perso

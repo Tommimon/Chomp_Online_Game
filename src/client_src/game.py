@@ -1,5 +1,5 @@
-from client.tavola import *
-from client.globale import *
+from client_src.tavola import *
+from client_src.globale import *
 from messaggio import *
 
 # PARAMETRI
@@ -12,7 +12,7 @@ NERO = (0, 0, 0)
 PADDING = 4
 
 
-class Game:  # gestisce code degli eventi, game loop e aggiornamento dello schermo e comunicazione server
+class Game:  # gestisce code degli eventi, game loop e aggiornamento dello schermo e comunicazione server_src
     def __init__(self, inizia, my_socket):
         succes, fail = pg.init()
         print("{0} successes and {1} failures".format(succes, fail))
@@ -50,7 +50,7 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
             mossa.add_val('y', y)
             mossa.send(self.socket)
 
-    def ceck_server(self):  # controlla se sono arrivati messaggi dal server
+    def ceck_server(self):  # controlla se sono arrivati messaggi dal server_src
         mossa = Messaggio()
         risp = mossa.try_recv(self.socket)  # controllo se arriva risposta
         if risp:  # è vero se è arrivato qualcosa
