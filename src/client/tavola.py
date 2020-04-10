@@ -6,8 +6,7 @@ ROSSO = (255, 0, 0)
 
 
 class Casella:
-    def __init__(self, tavola, index, pos, lato, avvelenato):
-        self.tavola = tavola  # mi salvo un ref alla tavola che contiene questa casella
+    def __init__(self, index, pos, lato, avvelenato):
         self.index_x = index[0]  # è la poszione che la casella occupa enlla tavola (è un num naturale)
         self.index_y = index[1]
         self.rect = pg.Rect(pos, (lato, lato))
@@ -61,7 +60,7 @@ class Tavola:
                     avvelenato = True
                 else:
                     avvelenato = False
-                new = Casella(self, (j, i), (x, y), self.lato, avvelenato)
+                new = Casella((j, i), (x, y), self.lato, avvelenato)
                 rig.append(new)  # aggiungo all lista a righe
                 x += self.lato + self.padding
             y += self.lato + self.padding
