@@ -13,9 +13,11 @@ clientSocket.connect(ADDRESS_SERVER)
 messInizia = Messaggio()
 messInizia.recv(clientSocket)
 inizia = messInizia.get_val('inizia')
-print(inizia)
 inizia = inizia == 'True'   # se il messaggio dice 'True' allora devo iniziare
-print(inizia)
+if inizia:
+    print('giochi per primo')
+else:
+    print('giochi per secondo')
 
 clientSocket.settimeout(TIMEOUT)
 

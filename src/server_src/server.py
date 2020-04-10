@@ -3,9 +3,16 @@ from server_src.tavola import *
 
 
 def leggi_mossa(mossa):  # prende in input un Messaggio
-    x = int(mossa.get_val('x'))
-    y = int(mossa.get_val('y'))
-    return x, y  # aggiungere try + except tipo non int
+    try:
+        x = int(mossa.get_val('x'))
+        y = int(mossa.get_val('y'))
+        return x, y
+    except TypeError:
+        # probabilemte significa che uno ha quittato e non ho ricevuto risposta abbandono() dovrebbe essere già andato
+        return None, None
+    except ValueError:
+        # il client ha mandato mossa incrompensibile, retituendo None non cerrà accettata da ceck_mossa
+        return None, None
 
 
 def manda_risposta(x, y, win):
@@ -17,16 +24,14 @@ def manda_risposta(x, y, win):
     else:
         win = None
 
-    print('calc', win)
-
     risposta.add_val('win', win)
     print('sending to g1:', risposta.stringa)
-    risposta.send(g1Socket)
+    risposta.safe_send(g1Socket)
 
     if win is not None:  # se non è None inverto il valore di win, se è None è uguale per entrambi i giocatori
         risposta.set_val('win', not win)
     print('sending to g2:', risposta.stringa)
-    risposta.send(g2Socket)
+    risposta.safe_send(g2Socket)
 
 
 def scrivi_mossa(x, y):  # restituisce un Messaggio
@@ -36,9 +41,15 @@ def scrivi_mossa(x, y):  # restituisce un Messaggio
     return mossa
 
 
-def broadcast(message):  # prende in input un Messaggio
-    message.send(g1Socket)
-    message.send(g2Socket)
+def abbandono(is_g1):
+    messaggio = Messaggio()
+    messaggio.add_val('quit', True)
+    if is_g1:
+        messaggio.safe_send(g2Socket)
+    else:
+        messaggio.safe_send(g1Socket)
+    global partitaInCorso
+    partitaInCorso = False
 
 
 # PARAMETRI
@@ -74,10 +85,16 @@ while True:
         richiesta = Messaggio()
         if turnoG1:
             print('waiting g1...')
-            richiesta.recv(g1Socket)
+            try:
+                richiesta.recv(g1Socket)
+            except ConnectionAbortedError:
+                abbandono(True)  # True significe che il G1 ha abbandonato
         else:
             print('waiting g2...')
-            richiesta.recv(g2Socket)
+            try:
+                richiesta.recv(g2Socket)
+            except ConnectionAbortedError:
+                abbandono(False)  # False significe che il G2 ha abbandonato
 
         print('ricevuto:', richiesta.stringa)
         xMossa, yMossa = leggi_mossa(richiesta)
@@ -89,6 +106,8 @@ while True:
                 partitaInCorso = False
             manda_risposta(xMossa, yMossa, winMossa)  # calcola i valori di win giusti per ogni giocatore e manda risp
             turnoG1 = not turnoG1  # adesso tocca all'altro
+        else:
+            abbandono(turnoG1)  # il giocatore sta mandando mosse non valide
 
     print('fine partita')
     g1Socket.close()

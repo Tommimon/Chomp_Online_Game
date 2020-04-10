@@ -37,8 +37,17 @@ class Messaggio:
     def send(self, socket):
         socket.send(self.stringa.encode(CODIFICA))
 
+    def safe_send(self, socket):
+        try:
+            self.send(socket)
+        except ConnectionAbortedError or ConnectionResetError:  # occore quando provo a mandare a uno che ha chiuso
+            pass
+
     def recv(self, socket):
-        self.stringa = socket.recv(BUFFER_SIZE).decode(CODIFICA)
+        rec = socket.recv(BUFFER_SIZE)
+        print('internal:', rec)
+        print('internal:' + str(rec))
+        self.stringa = rec.decode(CODIFICA)
 
     def try_recv(self, socket):
         try:

@@ -15,18 +15,19 @@ PADDING = 4
 class Game:  # gestisce code degli eventi, game loop e aggiornamento dello schermo e comunicazione server_src
     def __init__(self, inizia, my_socket):
         succes, fail = pg.init()
-        print("{0} successes and {1} failures".format(succes, fail))
         self.screen = pg.display.set_mode(RISOLUZIONE)  # mostro schermo
         self.clock = pg.time.Clock()  # inizializzo clock
         self.socket = my_socket  # da usare per mandare e ricevere
         self.state = GameState(inizia)
         self.running = True
         Globale.game = self  # verrà usata come varibile globale (sicome statica posso accedere da ovunque)
+        print('inizia il gioco!')
 
     def run(self):  # fa il game loop
         while self.running:
             self.clock.tick(FPS)  # mi fa andare al giusto frame rate
-            self.ceck_server()
+            if not self.state.finePartita:
+                self.ceck_server()
             for event in pg.event.get():
                 self.resolve_event(event)
             self.update_screen()
@@ -42,18 +43,20 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
         self.state.display(self.screen)  # disegno tutto quello che riguarda lo stato attuale
         pg.display.update()  # Or pg.display.flip()
 
-    def send_move(self, x, y):
-        if self.state.possoGiocare:
-            self.state.possoGiocare = False  # devo aspettare per giocare
-            mossa = Messaggio()
-            mossa.add_val('x', x)
-            mossa.add_val('y', y)
-            mossa.send(self.socket)
+    def send_move(self, x, y):  # arrivo qui solo da mouse_click quindi posso giocare e non è finita la partita
+        self.state.possoGiocare = False  # devo aspettare per giocare
+        mossa = Messaggio()
+        mossa.add_val('x', x)
+        mossa.add_val('y', y)
+        mossa.send(self.socket)
 
-    def ceck_server(self):  # controlla se sono arrivati messaggi dal server_src
+    def ceck_server(self):  # controlla se sono arrivati messaggi dal server
         mossa = Messaggio()
         risp = mossa.try_recv(self.socket)  # controllo se arriva risposta
         if risp:  # è vero se è arrivato qualcosa
+            if mossa.get_val('quit') is not None:  # arrivato messaggio che l'avversario ha quittato
+                self.abbandono()
+                return
             x = int(mossa.get_val('x'))
             y = int(mossa.get_val('y'))
             win = mossa.get_val('win')
@@ -63,9 +66,19 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
                 self.fine_partita(win)
 
     def fine_partita(self, win):
-        print('fine, ha vinto il ' + str(win) + ' giocatore')
+        if win:
+            print('HAI VINTO!')
+        else:
+            print('HAI PERSO')
+        self.state.finePartita = True
+        self.socket.close()
+
+    def abbandono(self):  # quando l'avversario abbandona
+        print("l'avversario ha abbandonato")
+        self.fine_partita(True)
 
     def quit(self):
+        self.socket.close()
         self.running = False
 
 
@@ -75,9 +88,10 @@ class GameState:  # contiene tutte le var significative per descrivere il gioco 
         self.tavoletta.crea_caselle()
         self.possoGiocare = inizia  # quando clicko una cella diventa false e quando l'altro gioca diventa true
         self.turnoMio = inizia
+        self.finePartita = False
 
     def mouse_click(self, pos):
-        if self.possoGiocare or True:  # solo per prova
+        if self.possoGiocare and not self.finePartita:
             self.tavoletta.ceck_click(pos)
 
     def del_caselle(self, x, y):
