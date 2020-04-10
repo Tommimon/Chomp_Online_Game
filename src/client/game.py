@@ -1,5 +1,5 @@
-from tavola import *
-from globale import *
+from client.tavola import *
+from client.globale import *
 from messaggio import *
 
 # PARAMETRI

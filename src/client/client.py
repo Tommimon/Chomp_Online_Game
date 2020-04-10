@@ -1,4 +1,4 @@
-from game import *
+from client.game import *
 
 # PARAMETRI
 IP_SERVER = 'localhost'
