@@ -4,7 +4,7 @@ from messaggio import *
 
 # PARAMETRI
 FPS = 60  # Frames per second.
-RISOLUZIONE = (1080, 720)
+RISOLUZIONE = (720, 480)
 POS_TAVOLA = (RISOLUZIONE[0]/10, RISOLUZIONE[1]/10)
 SIZE_TAVOLA = (RISOLUZIONE[0]*0.8, RISOLUZIONE[1]*0.8)  # ho scalato un po' la risoluzione dello schermo
 DIM_TAVOLA = (10, 4)  # numero di caselle in goni direzione
@@ -44,22 +44,27 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
         pg.display.update()  # Or pg.display.flip()
 
     def send_move(self, x, y):
-        self.state.possoGiocare = False  # devo aspettare per giocare
-        stringa_mossa = str((x, y)) + ';'
-        self.socket.send(stringa_mossa.encode(CODIFICA))  # mando una tupla formattata come stringa
-        pass  # dobbiamo inviare al server la richiesta di togliere una casella
+        if self.state.possoGiocare:
+            self.state.possoGiocare = False  # devo aspettare per giocare
+            mossa = Messaggio()
+            mossa.add_val('x', x)
+            mossa.add_val('y', y)
+            mossa.send(self.socket)
 
     def ceck_server(self):  # controlla se sono arrivati messaggi dal server
-        pass  # controllo se arriva risposta
-        if False:  # bisogna mettere se è arrivato qualcosa
-            x = 0  # ovviamente vanno messi a posto
-            y = 0
+        mossa = Messaggio()
+        risp = mossa.try_recv(self.socket)  # controllo se arriva risposta
+        if risp:  # è vero se è arrivato qualcosa
+            x = int(mossa.get_val('x'))
+            y = int(mossa.get_val('y'))
+            win = mossa.get_val('win')
             self.state.del_caselle(x, y)
-            if False:  # se arriva messaggio che è finita
-                self.fine_partita()
+            if win != 'None':  # se arriva messaggio che è finita
+                win = win == 'True'  # win diventa True se era 'True' se no False
+                self.fine_partita(win)
 
     def fine_partita(self, win):
-        print('fine, ha vinto il ' + win + ' giocatore')
+        print('fine, ha vinto il ' + str(win) + ' giocatore')
 
     def quit(self):
         self.running = False
