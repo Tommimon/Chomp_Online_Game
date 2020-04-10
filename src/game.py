@@ -1,9 +1,8 @@
 from tavola import *
 from globale import *
-import socket as sock
+from messaggio import *
 
 # PARAMETRI
-CODIFICA = 'utf-8'
 FPS = 60  # Frames per second.
 RISOLUZIONE = (1080, 720)
 POS_TAVOLA = (RISOLUZIONE[0]/10, RISOLUZIONE[1]/10)
@@ -46,7 +45,8 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
 
     def send_move(self, x, y):
         self.state.possoGiocare = False  # devo aspettare per giocare
-        self.socket.send(str((x, y)).encode(CODIFICA))  # mando una tupla formattata come stringa
+        stringa_mossa = str((x, y)) + ';'
+        self.socket.send(stringa_mossa.encode(CODIFICA))  # mando una tupla formattata come stringa
         pass  # dobbiamo inviare al server la richiesta di togliere una casella
 
     def ceck_server(self):  # controlla se sono arrivati messaggi dal server
