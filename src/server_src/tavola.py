@@ -16,7 +16,8 @@ class Tavola:
     def del_caselle(self, index_x, index_y):
         for i in range(0, len(self.righe)):
             if i <= index_y:  # se sono abbastanza in alto
-                self.righe[i] = index_x  # tolgo tutti quelli da x in poi, x compreso
+                if self.righe[i] > index_x:  # se è troppo lunga
+                    self.righe[i] = index_x  # tolgo tutti quelli da x in poi, x compreso
 
     def ceck_win(self):  # controllo se sono finite le caselle o se ne manca una
         if self.righe[self.n_rig - 1] == 0:  # se la riga più bassa è vuota allora sognifica che è tutto vuoto

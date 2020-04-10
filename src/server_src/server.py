@@ -106,6 +106,7 @@ while True:
                 partitaInCorso = False
             manda_risposta(xMossa, yMossa, winMossa)  # calcola i valori di win giusti per ogni giocatore e manda risp
             turnoG1 = not turnoG1  # adesso tocca all'altro
+            print('tavola', tavola.righe)
         else:
             abbandono(turnoG1)  # il giocatore sta mandando mosse non valide
 
