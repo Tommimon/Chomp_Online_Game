@@ -20,9 +20,8 @@ class Tavola:
 
     def ceck_win(self):  # controllo se sono finite le caselle o se ne manca una
         if self.righe[self.n_rig - 1] == 0:  # se la riga più bassa è vuota allora sognifica che è tutto vuoto
-            # l'ultimo che ha giocato ha perso
-            return 'penultimo'
+            return 'penultimo'  # l'ultimo che ha giocato ha perso
         elif self.righe[self.n_rig - 1] == 1 and (self.n_rig == 1 or self.righe[self.n_rig - 2] == 0):
             # devo controllare che la riga più bassa abbia 1 solo elemento e che la penultima 0 (se c'è)
-            # l'ultimo che ha giocato ha vinto
-            return 'ultimo'
+            return 'ultimo'  # l'ultimo che ha giocato ha vinto
+        return None

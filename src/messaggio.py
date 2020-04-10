@@ -23,6 +23,17 @@ class Messaggio:
         except ValueError:
             return None
 
+    def set_val(self, nome, valore):
+        try:
+            prec_stringa = self.stringa
+            prec_stringa = prec_stringa[prec_stringa.index(nome):]
+            prec_stringa = prec_stringa[:prec_stringa.index('\n')]  # come sopra così pendo 'nome=val_prec'
+            new_stringa = nome + '=' + str(valore)
+            self.stringa = self.stringa.replace(prec_stringa, new_stringa)
+            return True
+        except ValueError:
+            return False
+
     def send(self, socket):
         socket.send(self.stringa.encode(CODIFICA))
 
