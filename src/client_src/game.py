@@ -24,7 +24,6 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
         self.socket = my_socket  # da usare per mandare e ricevere
         self.state = GameState(inizia, dim_tavola)
         self.running = True
-        self.win = None
         self.rivincita = False
         Globale.game = self  # verrà usata come varibile globale (sicome statica posso accedere da ovunque)
         print('inizia il gioco!')
@@ -64,13 +63,16 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
             if mossa.get_val('quit') is not None:  # arrivato messaggio che l'avversario ha quittato
                 self.abbandono()
                 return
+            if mossa.get_val('opponent') is not None:
+                self.state.possoGiocare = self.state.turnoMio  # dopo che trovi avversario se inizi tu allora pui giocar
+                return
             x = int(mossa.get_val('x'))
             y = int(mossa.get_val('y'))
-            self.win = mossa.get_val('win')
+            win = mossa.get_val('win')
             self.state.del_caselle(x, y)
-            if self.win != 'None':  # se arriva messaggio che è finita
-                win = self.win == 'True'  # win diventa True se era 'True' se no False
-                self.fine_partita(win)
+            if win != 'None':  # se arriva messaggio che è finita
+                self.state.win = win == 'True'  # win diventa True se era 'True' se no False
+                self.fine_partita(self.state.win)
 
     def fine_partita(self, win):  # mi occupereò di chiudere il socket nel client
         if win:
@@ -91,9 +93,10 @@ class GameState:  # contiene tutte le var significative per descrivere il gioco 
     def __init__(self, inizia, dim_tavola):
         self.tavoletta = Tavola(POS_TAVOLA, SIZE_TAVOLA, dim_tavola, PADDING)
         self.tavoletta.crea_caselle()
-        self.possoGiocare = inizia  # quando clicko una cella diventa false e quando l'altro gioca diventa true
+        self.possoGiocare = False  # quando clicko una cella diventa false e quando l'altro gioca diventa true
         self.turnoMio = inizia
         self.finePartita = False
+        self.win = None
         self.bottone_quit = Bottone('Quit', (50, RISOLUZIONE[1] - 32), bg_color=ROSSO)
         self.bottone_rivincita = Bottone('Rivincita', (150, RISOLUZIONE[1] - 32), bg_color=VERDE)
         self.top_text = Bottone('', (100, 5), bg_color=NERO)  # uso un bottone come testo per non fare una classe testo
@@ -124,7 +127,7 @@ class GameState:  # contiene tutte le var significative per descrivere il gioco 
             self.display_turno(screen)
 
     def display_turno(self, screen):
-        if self.turnoMio:
+        if self.possoGiocare:
             self.top_text.text = 'Tocca a te'
             self.top_text.text_color = VERDE
         else:
@@ -133,7 +136,7 @@ class GameState:  # contiene tutte le var significative per descrivere il gioco 
         self.top_text.blit(screen)
 
     def display_fine(self, screen):
-        if Globale.game.win:
+        if self.win:
             self.top_text.text = 'Hai vinto!'
             self.top_text.text_color = VERDE
         else:

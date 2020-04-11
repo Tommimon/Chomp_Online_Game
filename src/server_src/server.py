@@ -57,6 +57,12 @@ def abbandono(is_g1):
     partitaInCorso = False
 
 
+def found_opponent(destinatario):  # dico al destinatario che ho trovato l'avversario
+    messaggio = Messaggio()
+    messaggio.add_val('opponent', True)
+    messaggio.safe_send(destinatario)
+
+
 ADDRESS_SERVER = (IP_SERVER, PORTA_SERVER)
 serverSocket = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
 serverSocket.bind(ADDRESS_SERVER)
@@ -76,6 +82,9 @@ while True:
     print('connesso g2', g2Address)
     messInizia.set_val('inizia', False)
     messInizia.send(g2Socket)
+
+    found_opponent(g1Socket)  # dico ad entrambi che c'è l'avversario
+    found_opponent(g2Socket)
 
     partitaInCorso = True
     turnoG1 = True
