@@ -14,7 +14,7 @@ class Bottone:
         self.text_color = text_color
         self.bg_color = bg_color
         self.bold = bold
-        self.font = pg.font.SysFont("comicsansms", 32)
+        self.font = pg.font.Font(FONT, 32)
         self.rect = None
 
     def blit(self, screen):
