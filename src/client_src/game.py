@@ -24,6 +24,7 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
         self.socket = my_socket  # da usare per mandare e ricevere
         self.state = GameState(inizia, dim_tavola)
         self.running = True
+        self.win = None
         self.rivincita = False
         Globale.game = self  # verrà usata come varibile globale (sicome statica posso accedere da ovunque)
         print('inizia il gioco!')
@@ -65,10 +66,10 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
                 return
             x = int(mossa.get_val('x'))
             y = int(mossa.get_val('y'))
-            win = mossa.get_val('win')
+            self.win = mossa.get_val('win')
             self.state.del_caselle(x, y)
-            if win != 'None':  # se arriva messaggio che è finita
-                win = win == 'True'  # win diventa True se era 'True' se no False
+            if self.win != 'None':  # se arriva messaggio che è finita
+                win = self.win == 'True'  # win diventa True se era 'True' se no False
                 self.fine_partita(win)
 
     def fine_partita(self, win):  # mi occupereò di chiudere il socket nel client
@@ -95,6 +96,7 @@ class GameState:  # contiene tutte le var significative per descrivere il gioco 
         self.finePartita = False
         self.bottone_quit = Bottone('Quit', (50, RISOLUZIONE[1] - 32), bg_color=ROSSO)
         self.bottone_rivincita = Bottone('Rivincita', (150, RISOLUZIONE[1] - 32), bg_color=VERDE)
+        self.top_text = Bottone('', (100, 5), bg_color=NERO)  # uso un bottone come testo per non fare una classe testo
 
     def mouse_click(self, pos):
         if self.finePartita:
@@ -115,5 +117,26 @@ class GameState:  # contiene tutte le var significative per descrivere il gioco 
     def display(self, screen):
         self.tavoletta.blit(screen)
         if self.finePartita:
+            self.display_fine(screen)
             self.bottone_rivincita.blit(screen)
             self.bottone_quit.blit(screen)
+        else:
+            self.display_turno(screen)
+
+    def display_turno(self, screen):
+        if self.turnoMio:
+            self.top_text.text = 'Tocca a te'
+            self.top_text.text_color = VERDE
+        else:
+            self.top_text.text = "In attesa dell'avversario"
+            self.top_text.text_color = ROSSO
+        self.top_text.blit(screen)
+
+    def display_fine(self, screen):
+        if Globale.game.win:
+            self.top_text.text = 'Hai vinto!'
+            self.top_text.text_color = VERDE
+        else:
+            self.top_text.text = 'Hai Perso'
+            self.top_text.text_color = ROSSO
+        self.top_text.blit(screen)
