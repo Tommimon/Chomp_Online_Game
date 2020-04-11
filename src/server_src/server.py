@@ -4,7 +4,7 @@ from server_src.tavola import *
 # PARAMETRI
 IP_SERVER = '192.168.1.100'
 PORTA_SERVER = 46142
-DIM_TAVOLA = (10, 4)  # numero di caselle in ogni direzione
+DIM_TAVOLA = (4, 10)  # numero di caselle in ogni direzione
 
 
 def leggi_mossa(mossa):  # prende in input un Messaggio

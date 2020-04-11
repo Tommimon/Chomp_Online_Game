@@ -17,22 +17,27 @@ else:
     portaServer = int(settings[1])
 
 ADDRESS_SERVER = (ipServer, portaServer)
-clientSocket = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
-clientSocket.connect(ADDRESS_SERVER)
 
-messInizia = Messaggio()
-messInizia.recv(clientSocket)
-inizia = messInizia.get_val('inizia')
-inizia = inizia == 'True'   # se il messaggio dice 'True' allora devo iniziare
-if inizia:
-    print('giochi per primo')
-else:
-    print('giochi per secondo')
-nCol = int(messInizia.get_val('n_col'))
-nRig = int(messInizia.get_val('n_rig'))
-dimTavola = (nCol, nRig)
+rivincita = True
+while rivincita:
+    clientSocket = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
+    clientSocket.connect(ADDRESS_SERVER)
+    print('connesso')
 
-clientSocket.settimeout(TIMEOUT)
+    messInizia = Messaggio()
+    messInizia.recv(clientSocket)
+    inizia = messInizia.get_val('inizia')
+    inizia = inizia == 'True'   # se il messaggio dice 'True' allora devo iniziare
+    if inizia:
+        print('giochi per primo')
+    else:
+        print('giochi per secondo')
+    nCol = int(messInizia.get_val('n_col'))
+    nRig = int(messInizia.get_val('n_rig'))
+    dimTavola = (nCol, nRig)
 
-gameIstance = Game(inizia, clientSocket, dimTavola)
-gameIstance.run()
+    clientSocket.settimeout(TIMEOUT)
+
+    gameIstance = Game(inizia, clientSocket, dimTavola)
+    rivincita = gameIstance.run()  # il gioco restituisce True se devogiocare ancora, se no FalseS
+    clientSocket.close()

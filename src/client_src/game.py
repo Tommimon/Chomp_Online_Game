@@ -1,6 +1,7 @@
 from client_src.tavola import *
 from client_src.globale import *
 from messaggio import *
+from bottone import *
 
 # PARAMETRI
 FPS = 60  # Frames per second.
@@ -9,6 +10,8 @@ POS_TAVOLA = (RISOLUZIONE[0]/10, RISOLUZIONE[1]/10)
 SIZE_TAVOLA = (RISOLUZIONE[0]*0.8, RISOLUZIONE[1]*0.8)  # ho scalato un po' la risoluzione dello schermo
 DIM_TAVOLA = (10, 4)  # numero di caselle in goni direzione
 NERO = (0, 0, 0)
+ROSSO = (250, 0, 0)
+VERDE = (0, 250, 0)
 PADDING = 4
 
 
@@ -16,10 +19,12 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
     def __init__(self, inizia, my_socket, dim_tavola):
         succes, fail = pg.init()
         self.screen = pg.display.set_mode(RISOLUZIONE)  # mostro schermo
+        pg.display.set_caption('Chomp')
         self.clock = pg.time.Clock()  # inizializzo clock
         self.socket = my_socket  # da usare per mandare e ricevere
         self.state = GameState(inizia, dim_tavola)
         self.running = True
+        self.rivincita = False
         Globale.game = self  # verrà usata come varibile globale (sicome statica posso accedere da ovunque)
         print('inizia il gioco!')
 
@@ -31,6 +36,7 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
             for event in pg.event.get():
                 self.resolve_event(event)
             self.update_screen()
+        return self.rivincita  # restituisco al client True se voglio fare un'altra partita
 
     def resolve_event(self, event):
         if event.type == pg.QUIT:
@@ -65,20 +71,18 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
                 win = win == 'True'  # win diventa True se era 'True' se no False
                 self.fine_partita(win)
 
-    def fine_partita(self, win):
+    def fine_partita(self, win):  # mi occupereò di chiudere il socket nel client
         if win:
             print('HAI VINTO!')
         else:
             print('HAI PERSO')
         self.state.finePartita = True
-        self.socket.close()
 
     def abbandono(self):  # quando l'avversario abbandona
         print("l'avversario ha abbandonato")
         self.fine_partita(True)
 
-    def quit(self):
-        self.socket.close()
+    def quit(self):  # mi occupereò di chiudere il socket nel client
         self.running = False
 
 
@@ -89,10 +93,19 @@ class GameState:  # contiene tutte le var significative per descrivere il gioco 
         self.possoGiocare = inizia  # quando clicko una cella diventa false e quando l'altro gioca diventa true
         self.turnoMio = inizia
         self.finePartita = False
+        self.bottone_quit = Bottone('Quit', (50, RISOLUZIONE[1] - 32), bg_color=ROSSO)
+        self.bottone_rivincita = Bottone('Rivincita', (150, RISOLUZIONE[1] - 32), bg_color=VERDE)
 
     def mouse_click(self, pos):
-        if self.possoGiocare and not self.finePartita:
-            self.tavoletta.ceck_click(pos)
+        if self.finePartita:
+            if self.bottone_rivincita.ceck_click(pos):
+                Globale.game.rivincita = True
+                Globale.game.quit()
+            elif self.bottone_quit.ceck_click(pos):
+                Globale.game.quit()
+        else:
+            if self.possoGiocare:
+                self.tavoletta.ceck_click(pos)
 
     def del_caselle(self, x, y):
         self.turnoMio = not self.turnoMio
@@ -101,3 +114,6 @@ class GameState:  # contiene tutte le var significative per descrivere il gioco 
 
     def display(self, screen):
         self.tavoletta.blit(screen)
+        if self.finePartita:
+            self.bottone_rivincita.blit(screen)
+            self.bottone_quit.blit(screen)
