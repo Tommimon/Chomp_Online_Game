@@ -2,9 +2,6 @@ from messaggio import *
 from server_src.tavola import *
 from settings_reader import *
 
-# PARAMETRI
-DIM_TAVOLA = (4, 10)  # numero di caselle in ogni direzione
-
 
 def leggi_mossa(mossa):  # prende in input un Messaggio
     try:
@@ -63,7 +60,7 @@ def found_opponent(destinatario):  # dico al destinatario che ho trovato l'avver
 
 
 # leggo i settings dal file e se non ci sono li chiedo all'utente
-settings = leggi_prop(['host_ip', 'host_port'])
+settings = leggi_prop(['host_ip', 'host_port', 'righe', 'colonne'])
 
 if settings[0] == '':  # server_ip
     ipServer = input('ip: ')
@@ -73,7 +70,17 @@ if settings[1] == '':  # server_port
     portaServer = int(input('porta: '))
 else:
     portaServer = int(settings[1])
+if settings[2] == '':  # righe
+    n_righe = int(input('righe: '))
+else:
+    n_righe = int(settings[2])
+if settings[3] == '':  # colonne
+    n_colonne = int(input('colonne: '))
+else:
+    n_colonne = int(settings[3])
 
+
+dimTavola = (n_colonne, n_righe)  # numero di caselle in ogni direzione
 
 ADDRESS_SERVER = (ipServer, portaServer)
 serverSocket = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
@@ -86,8 +93,8 @@ while True:
     g1Socket, g1Address = serverSocket.accept()
     print('connesso g1', g1Address)
     messInizia.add_val('inizia', True)
-    messInizia.add_val('n_col', DIM_TAVOLA[0])
-    messInizia.add_val('n_rig', DIM_TAVOLA[1])
+    messInizia.add_val('n_col', dimTavola[0])
+    messInizia.add_val('n_rig', dimTavola[1])
     messInizia.send(g1Socket)  # gli dico se è lui a fare la prima mossa
 
     g2Socket, g2Address = serverSocket.accept()
@@ -100,7 +107,7 @@ while True:
 
     partitaInCorso = True
     turnoG1 = True
-    tavola = Tavola(DIM_TAVOLA)
+    tavola = Tavola(dimTavola)
 
     while partitaInCorso:
         richiesta = Messaggio()
