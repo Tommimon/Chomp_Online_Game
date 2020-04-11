@@ -2,8 +2,8 @@ from messaggio import *
 from server_src.tavola import *
 
 # PARAMETRI
-IP_SERVER = 'localhost'
-PORTA_SERVER = 50000
+IP_SERVER = '192.168.1.100'
+PORTA_SERVER = 46142
 DIM_TAVOLA = (10, 4)  # numero di caselle in ogni direzione
 
 
