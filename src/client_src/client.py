@@ -1,11 +1,12 @@
 from client_src.game import *
 from settings_reader import *
+from bottone import *
 
 # PARAMETRI
 TIMEOUT = 0.2
 
 # leggo i settings dal file e se non ci sono li chiedo all'utente
-settings = leggi_prop(['server_ip', 'server_port'])
+settings = leggi_prop(['connect_ip', 'connect_port'])
 
 if settings[0] == '':  # server_ip
     ipServer = input('ip: ')

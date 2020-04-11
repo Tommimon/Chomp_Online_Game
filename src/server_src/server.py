@@ -1,9 +1,8 @@
 from messaggio import *
 from server_src.tavola import *
+from settings_reader import *
 
 # PARAMETRI
-IP_SERVER = '192.168.1.100'
-PORTA_SERVER = 46142
 DIM_TAVOLA = (4, 10)  # numero di caselle in ogni direzione
 
 
@@ -63,13 +62,26 @@ def found_opponent(destinatario):  # dico al destinatario che ho trovato l'avver
     messaggio.safe_send(destinatario)
 
 
-ADDRESS_SERVER = (IP_SERVER, PORTA_SERVER)
+# leggo i settings dal file e se non ci sono li chiedo all'utente
+settings = leggi_prop(['host_ip', 'host_port'])
+
+if settings[0] == '':  # server_ip
+    ipServer = input('ip: ')
+else:
+    ipServer = settings[0]
+if settings[1] == '':  # server_port
+    portaServer = int(input('porta: '))
+else:
+    portaServer = int(settings[1])
+
+
+ADDRESS_SERVER = (ipServer, portaServer)
 serverSocket = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
 serverSocket.bind(ADDRESS_SERVER)
 serverSocket.listen()
 
 while True:
-    print('server_src pronto')
+    print('server pronto')
     messInizia = Messaggio()
     g1Socket, g1Address = serverSocket.accept()
     print('connesso g1', g1Address)

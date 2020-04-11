@@ -83,6 +83,7 @@ class Game:  # gestisce code degli eventi, game loop e aggiornamento dello scher
 
     def abbandono(self):  # quando l'avversario abbandona
         print("l'avversario ha abbandonato")
+        self.state.win = True
         self.fine_partita(True)
 
     def quit(self):  # mi occupereò di chiudere il socket nel client

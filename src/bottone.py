@@ -8,12 +8,13 @@ FONT = 'freesansbold.ttf'
 class Bottone:
 
     def __init__(self, text, pos, size=32, text_color=NERO, bg_color=BIANCO, bold=True):
+        succes, fail = pg.init()
         self.text = text
         self.pos = pos
         self.text_color = text_color
         self.bg_color = bg_color
         self.bold = bold
-        self.font = pg.font.Font(FONT, size)
+        self.font = pg.font.SysFont("comicsansms", 32)
         self.rect = None
 
     def blit(self, screen):
